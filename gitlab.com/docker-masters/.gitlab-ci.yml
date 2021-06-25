@@ -1,0 +1,30 @@
+image: docker:20.10
+services:
+  - docker:20.10-dind
+
+stages:
+  - build
+  - test
+  - docker
+
+build:
+  stage: build
+  artifacts:
+    untracked: true
+  script:
+    - docker run --rm -v $(pwd):/app composer install
+
+phpunit:
+  stage: test
+  script:
+    - docker run --rm -v $(pwd):/app phpunit/phpunit ./test
+
+docker:
+  stage: docker
+  image: docker:20.10-dind
+  script:
+    - docker login ${CI_REGISTRY} -u gitlab-ci-token -p ${CI_BUILD_TOKEN}
+    - docker build -t ${CI_REGISTRY_IMAGE}:${CI_JOB_ID} --build-arg IMAGE_ID=${CI_JOB_ID} .
+    - docker push ${CI_REGISTRY_IMAGE}:${CI_JOB_ID}
+
+

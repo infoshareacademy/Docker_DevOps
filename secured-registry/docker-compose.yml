@@ -1,0 +1,18 @@
+version: '3'
+services:
+  registry:
+    image: registry:2
+    ports:
+      - 443:443
+    volumes:
+      - ./data:/var/lib/registry
+      - /etc/letsencrypt:/etc/letsencrypt
+      - ./auth:/auth
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:443
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/etc/letsencrypt/live/registry.lach.dev/fullchain.pem
+      - REGISTRY_HTTP_TLS_KEY=/etc/letsencrypt/live/registry.lach.dev/privkey.pem
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=Registry
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+
