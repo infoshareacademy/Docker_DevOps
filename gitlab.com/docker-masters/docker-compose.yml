@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ee:latest'
+    restart: always
+    hostname: 'gitlab.lach.dev'
+    networks:
+      gitlab-network:
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.lach.dev';
+        registry_external_url 'https://registry-gitlab.lach.dev';
+	  letsencrypt['enable'] = true;
+	  letsencrypt['conract_emails'] = ['llach@llach.pl'];
+	  gitlab_rails['initial_root_password'] = 'passw0rd';
+	  gotlab_rails['initial_shared_runners_registration_token'] = 't0ken';
+    ports:
+      - 80:80
+      - 443:443
+      #- 22:22
+    volumes:
+      - ./config:/etc/gitlab
+      - ./logs:/var/log/gitlab
+      - ./data:/var/opt/gitlab
+
+networks:
+  gitlab-network:
+    name: gitlab-network
+

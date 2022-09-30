@@ -1,0 +1,14 @@
+version: '3'
+services:
+  gitlab-runner:
+    image: gitlab.gitlab-runner:latest
+    volumes:
+      - ./runner-config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      gitlab-network:
+    restart: always
+
+networks:
+  gitlab-network:
+    name: gitlab-network
